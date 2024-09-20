@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/public/yussman.png" />
+  <title>Pull Git Repos</title>
+  <style>
+    body {
+      background-color: #343a40;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .col-md-6 {
+      flex: 0 0 48%;
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+    .btn-success:hover {
+      background-color: #218838;
+    }
+    .response {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #444;
+      border-radius: 5px;
+      color: white;
+      white-space: pre-wrap; /* Preserve formatting like line breaks */
+      font-family: monospace; /* Use monospace for code-like output */
+      overflow-x: auto; /* Allow horizontal scrolling for long lines */
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 768px) {
+      .col-md-6 {
+        flex: 0 0 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pull Git Repos</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <button id="server-repo-btn" class="btn btn-primary" onclick="pullRepo('server')">Pull Server Repo</button>
+        <div id="server-repo-response" class="response"></div> <!-- Div to show response -->
+      </div>
+      <div class="col-md-6">
+        <button id="client-repo-btn" class="btn btn-success" onclick="pullRepo('client')">Pull Client Repo</button>
+        <div id="client-repo-response" class="response"></div> <!-- Div to show response -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    function pullRepo(repo) {
+      const btn = document.getElementById(`${repo}-repo-btn`);
+      const responseDiv = document.getElementById(`${repo}-repo-response`);
+      btn.disabled = true;  // Disable the button
+      const originalText = btn.textContent;
+      btn.textContent = 'Loading...';  // Change text to 'Loading...'
+      responseDiv.textContent = ''; // Clear previous response
+  
+      // Fetch the appropriate endpoint
+      fetch(`/pull-${repo}-repo`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(responseText => {
+          responseDiv.textContent = responseText; // Show response in div, preserving formatting
+          btn.textContent = originalText;  // Revert text back to original
+          btn.disabled = false;  // Re-enable the button
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          responseDiv.textContent = 'An error occurred: ' + error.message;
+          btn.textContent = originalText;  // Revert text back to original
+          btn.disabled = false;  // Re-enable the button
+        });
+    }
+  </script>
+  
+</body>
+</html>
