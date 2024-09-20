@@ -56,6 +56,4 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(process.env.PORT, process.env.IP || '0.0.0.0', () => {
-  console.log(`Server running on ${process.env.IP || '0.0.0.0'}:${process.env.PORT}`);
-});
+app.listen(process.env.PORT, process.env.IP || '0.0.0.0', () => {});
